@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur de Moyenne IPEIN - Verdict Final</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .config-card {
+            background: var(--card);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 24px;
+            justify-content: center;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .field-group { display: flex; align-items: center; gap: 12px; }
+        .field-group label { font-weight: 600; color: var(--primary); }
+
+        select {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus { border-color: var(--accent); }
+
+        .semester-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        @media (min-width: 1024px) {
+            .semester-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.04);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin: 0 0 20px 0;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2::before {
+            content: '';
+            width: 4px; height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); padding: 12px 8px; border-bottom: 2px solid var(--border); }
+        td { padding: 8px; border-bottom: 1px solid #f8fafc; vertical-align: middle; }
+
+        input[type="number"] {
+            width: 55px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        input:disabled { background: #e2e8f0; opacity: 0.5; cursor: not-allowed; }
+
+        .coef-tag {
+            background: #eff6ff;
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        .moy-val { font-weight: 700; color: var(--primary); }
+
+        .action-area { text-align: center; margin-bottom: 40px; }
+
+        button {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        button:hover { transform: translateY(-2px); background: #1d4ed8; }
+
+        .dashboard {
+            background: var(--primary);
+            color: white;
+            border-radius: 24px;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+            text-align: center;
+        }
+
+        .stat-box h4 { margin: 0 0 8px 0; color: #94a3b8; font-size: 0.875rem; text-transform: uppercase; }
+        .stat-box .val { font-size: 2.25rem; font-weight: 800; }
+
+        .verdict-banner {
+            margin-top: 32px;
+            padding: 24px;
+            border-radius: 16px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .success-bg { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 2px solid var(--success); }
+        .fail-bg { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 2px solid var(--danger); }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Calculateur IPEIN</h1>
+        <p>Gérez vos notes et obtenez votre verdict annuel instantanément.</p>
+    </header>
+
+    <div class="config-card">
+        <div class="field-group">
+            <label>Filière</label>
+            <select id="filiere" onchange="initApp()">
+                <option value="MP">Math-Physique (MP)</option>
+                <option value="PC">Physique-Chimie (PC)</option>
+                <option value="T">Technologie (T)</option>
+            </select>
+        </div>
+        <div class="field-group">
+            <label>Année</label>
+            <select id="annee" onchange="initApp()">
+                <option value="1">1ère Année</option>
+                <option value="2">2ème Année</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="semester-grid">
+        <div class="card">
+            <h2>Semestre 1</h2>
+            <table id="table-s1">
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Coef</th>
+                        <th>Test</th>
+                        <th>DS</th>
+                        <th>TP</th>
+                        <th>Examen</th>
+                        <th>Moy</th>
+                    </tr>
+                </thead>
+                <tbody id="body-s1"></tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>Semestre 2</h2>
+            <table id="table-s2">
+                <thead>
+                    <tr>
+                        <th>Matière</th>
+                        <th>Coef</th>
+                        <th>Test</th>
+                        <th>DS</th>
+                        <th>TP</th>
+                        <th>Examen</th>
+                        <th>Moy</th>
+                    </tr>
+                </thead>
+                <tbody id="body-s2"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="action-area">
+        <button onclick="calculateGlobal()">Calculer le Résultat Final</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="stat-box">
+            <h4>Moyenne S1</h4>
+            <div class="val" id="disp-s1">--</div>
+        </div>
+        <div class="stat-box">
+            <h4>Moyenne S2</h4>
+            <div class="val" id="disp-s2">--</div>
+        </div>
+        <div class="stat-box">
+            <h4>Moyenne Annuelle</h4>
+            <div class="val" id="disp-annuel">--</div>
+        </div>
+    </div>
+
+    <div id="verdict" class="verdict-banner"></div>
+</div>
+
+<script>
+    // Configuration : t: false pour l'informatique, CFM et maintenant STA (Auto)
+    const data = {
+        "MP": {
+            "1": [
+                {n: "Algèbre", c: 7, t: false}, {n: "Analyse", c: 7, t: false}, {n: "Physique", c: 8, t: true},
+                {n: "Chimie Gén.", c: 4, t: true}, {n: "Français", c: 3, t: false}, {n: "Anglais", c: 3, t: false},
+                {n: "Informatique", c: 4, t: false}, {n: "STA (Meca)", c: 2.5, t: true}, {n: "STA (Auto)", c: 2.5, t: false}
+            ],
+            "2": [
+                {n: "Algèbre", c: 6, t: false}, {n: "Analyse", c: 8, t: false}, {n: "Physique", c: 10, t: true},
+                {n: "Chimie Inorg.", c: 4, t: true}, {n: "Français", c: 3, t: false}, {n: "Anglais", c: 3, t: false},
+                {n: "Informatique", c: 4, t: false}, {n: "STA (Meca)", c: 3, t: true}, {n: "STA (Auto)", c: 3, t: false}
+            ]
+        },
+        "PC": {
+            "1": [
+                {n: "Algèbre", c: 5, t: false}, {n: "Analyse", c: 5, t: false}, {n: "Physique", c: 10, t: true},
+                {n: "Chimie Org.", c: 6, t: true}, {n: "Français", c: 3, t: false}, {n: "Anglais", c: 3, t: false},
+                {n: "Informatique", c: 4, t: false}, {n: "STA (Meca)", c: 2.5, t: true}, {n: "STA (Auto)", c: 2.5, t: false}
+            ],
+            "2": [
+                {n: "Algèbre", c: 5, t: false}, {n: "Analyse", c: 5, t: false}, {n: "Physique", c: 11, t: true},
+                {n: "Chimie Inorg.", c: 7, t: true}, {n: "Français", c: 3, t: false}, {n: "Anglais", c: 3, t: false},
+                {n: "Informatique", c: 4, t: false}, {n: "STA (Meca)", c: 3, t: true}, {n: "STA (Auto)", c: 3, t: false}
+            ]
+        },
+        "T": {
+            "1": [
+                {n: "Algèbre", c: 5, t: false}, {n: "Analyse", c: 5, t: false}, {n: "Physique", c: 8, t: true},
+                {n: "Chimie Gén.", c: 4, t: true}, {n: "Français", c: 3, t: false}, {n: "Anglais", c: 3, t: false},
+                {n: "Informatique", c: 4, t: false}, {n: "STA (Meca)", c: 2.5, t: true}, {n: "STA (Auto)", c: 2.5, t: false},
+                {n: "CFM (Concep)", c: 3.5, t: false}, {n: "CFM (Fab)", c: 3.5, t: false}
+            ],
+            "2": [
+                {n: "Algèbre", c: 5, t: false}, {n: "Analyse", c: 5, t: false}, {n: "Physique", c: 10, t: true},
+                {n: "Chimie Inorg.", c: 4, t: true}, {n: "Français", c: 3, t: false}, {n: "Anglais", c: 3, t: false},
+                {n: "Informatique", c: 4, t: false}, {n: "STA (Meca)", c: 3, t: true}, {n: "STA (Auto)", c: 3, t: false},
+                {n: "CFM (Concep)", c: 3, t: false}, {n: "CFM (Fab)", c: 3, t: false}
+            ]
+        }
+    };
+
+    function initApp() {
+        const fil = document.getElementById('filiere').value;
+        const ann = document.getElementById('annee').value;
+        renderTable('body-s1', data[fil][ann], 's1');
+        renderTable('body-s2', data[fil][ann], 's2');
+        document.getElementById('verdict').style.display = 'none';
+    }
+
+    function renderTable(id, subjects, p) {
+        const b = document.getElementById(id);
+        b.innerHTML = subjects.map((s, i) => `
+            <tr class="row-${p}" data-coef="${s.c}" data-tp="${s.t}">
+                <td style="font-weight:600; font-size:0.9rem">${s.n}</td>
+                <td><span class="coef-tag">${s.c}</span></td>
+                <td><input type="number" class="i-test" step="0.25" min="0" max="20" placeholder="-"></td>
+                <td><input type="number" class="i-ds" step="0.25" min="0" max="20" placeholder="-"></td>
+                <td><input type="number" class="i-tp" step="0.25" min="0" max="20" placeholder="-" ${s.t?'':'disabled'}></td>
+                <td><input type="number" class="i-ex" step="0.25" min="0" max="20" placeholder="-"></td>
+                <td><span class="moy-val" id="m-${p}-${i}">--</span></td>
+            </tr>
+        `).join('');
+    }
+
+    function calcSem(p) {
+        const rows = document.querySelectorAll(`.row-${p}`);
+        let pts = 0, co = 0, done = true;
+
+        rows.forEach((r, i) => {
+            const c = parseFloat(r.dataset.coef);
+            const test = parseFloat(r.querySelector('.i-test').value);
+            const ds = parseFloat(r.querySelector('.i-ds').value);
+            const ex = parseFloat(r.querySelector('.i-ex').value);
+            const tp = r.dataset.tp === 'true' ? parseFloat(r.querySelector('.i-tp').value) : 0;
+
+            if(isNaN(test) || isNaN(ds) || isNaN(ex) || (r.dataset.tp==='true' && isNaN(tp))) {
+                done = false; return;
+            }
+
+            let moy = 0;
+            let cc = (test + ds) / 2;
+            if(r.dataset.tp === 'true') moy = (cc*0.2) + (tp*0.2) + (ex*0.6);
+            else moy = (cc*0.3) + (ex*0.7);
+
+            document.getElementById(`m-${p}-${i}`).innerText = moy.toFixed(2);
+            pts += moy * c; co += c;
+        });
+        return done ? (pts / co) : null;
+    }
+
+    function calculateGlobal() {
+        const s1 = calcSem('s1');
+        const s2 = calcSem('s2');
+        const v = document.getElementById('verdict');
+
+        if(s1 !== null) document.getElementById('disp-s1').innerText = s1.toFixed(3);
+        if(s2 !== null) document.getElementById('disp-s2').innerText = s2.toFixed(3);
+
+        if(s1 !== null && s2 !== null) {
+            const ann = (s1*2 + s2*3) / 5;
+            document.getElementById('disp-annuel').innerText = ann.toFixed(3);
+            
+            v.style.display = 'block';
+            if(ann >= 10) {
+                v.className = "verdict-banner success-bg";
+                v.innerHTML = "🎉 FÉLICITATIONS ! Vous avez réussi votre année avec brio.";
+            } else {
+                v.className = "verdict-banner fail-bg";
+                v.innerHTML = "❌ RÉSULTAT : ÉCHEC. Ne vous découragez pas, persévérez pour la prochaine fois !";
+            }
+        } else {
+            alert("Veuillez remplir toutes les notes pour les deux semestres.");
+        }
+    }
+
+    window.onload = initApp;
+</script>
+</body>
+</html>
